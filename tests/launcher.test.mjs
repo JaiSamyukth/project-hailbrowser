@@ -56,12 +56,14 @@ test('start pages accept bare domains and reject junk', () => {
 });
 
 test('browser data folders per platform', () => {
+  // Asking for another platform's folder still joins with this machine's separator.
+  const dir = (...args) => userDataDir(...args).replace(/\\/g, '/');
   const c = { ...DEFAULT_CONFIG };
-  assert.equal(userDataDir(c, 'darwin', {}, '/Users/a'), '/Users/a/Library/Application Support/Google/Chrome');
-  assert.equal(userDataDir(c, 'linux', {}, '/home/a'), '/home/a/.config/google-chrome');
-  assert.equal(userDataDir({ ...c, browser: 'brave' }, 'linux', { XDG_CONFIG_HOME: '/x' }, '/home/a'), '/x/BraveSoftware/Brave-Browser');
-  assert.match(userDataDir({ ...c, browser: 'edge' }, 'win32', { LOCALAPPDATA: 'C:\\L' }, 'C:\\U'), /Microsoft[\\/]Edge[\\/]User Data$/);
-  assert.equal(userDataDir({ ...c, userDataDir: '/custom' }, 'linux'), '/custom');
+  assert.equal(dir(c, 'darwin', {}, '/Users/a'), '/Users/a/Library/Application Support/Google/Chrome');
+  assert.equal(dir(c, 'linux', {}, '/home/a'), '/home/a/.config/google-chrome');
+  assert.equal(dir({ ...c, browser: 'brave' }, 'linux', { XDG_CONFIG_HOME: '/x' }, '/home/a'), '/x/BraveSoftware/Brave-Browser');
+  assert.equal(dir({ ...c, browser: 'edge' }, 'win32', { LOCALAPPDATA: 'C:/L' }, 'C:/U'), 'C:/L/Microsoft/Edge/User Data');
+  assert.equal(dir({ ...c, userDataDir: '/custom' }, 'linux'), '/custom');
 });
 
 test('finds the extension in a profile by id or by folder, and notices when it is off', () => {
