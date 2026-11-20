@@ -325,12 +325,25 @@ async function latestCommit(repo, branch) {
     headers: { accept: 'application/vnd.github.sha', 'user-agent': 'hailbrowser-launcher' },
     signal: AbortSignal.timeout(15000),
   });
-  if (res.status === 404 || res.status === 422) throw new Error(`GitHub has no branch "${branch}" in ${repo}.`);
+  if (res.status === 404 || res.status === 422) throw Object.assign(new Error(`GitHub has no branch "${branch}" in ${repo}.`), { final: true });
   if (res.status === 403 || res.status === 429) throw new Error('GitHub rate limit reached; try again in an hour.');
   if (!res.ok) throw new Error(`GitHub answered ${res.status}.`);
   const sha = (await res.text()).trim();
   if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Unexpected answer from GitHub.');
   return sha;
+}
+
+async function downloadZip(repo, ref, branch) {
+  const res = await fetch(`https://codeload.github.com/${repo}/zip/${ref}`, { headers: { 'user-agent': 'hailbrowser-launcher' }, signal: AbortSignal.timeout(120000) });
+  if (res.status === 404) throw new Error(`GitHub has no branch "${branch}" in ${repo}.`);
+  if (!res.ok) throw new Error(`Download failed (${res.status}).`);
+  return Buffer.from(await res.arrayBuffer());
+}
+
+/** GitHub writes the commit id into the zip's trailing comment. */
+export function zipCommit(buf) {
+  const tail = buf.subarray(Math.max(0, buf.length - 40)).toString('latin1');
+  return /^[0-9a-f]{40}$/.test(tail) ? tail : null;
 }
 
 function extractZip(zip, dest) {
@@ -379,15 +392,25 @@ export async function update(config, { root = ROOT, log = console.log } = {}) {
   }
 
   const installed = readInstalled(root);
-  const sha = await latestCommit(repo, branch);
+  let sha = null;
+  let zipData = null;
+  try {
+    sha = await latestCommit(repo, branch);
+  } catch (e) {
+    if (e.final) throw e;
+    // GitHub's API allows 60 questions an hour per network address. The plain download has no
+    // such limit and names its commit in the zip comment, so fall back to that.
+    zipData = await downloadZip(repo, `refs/heads/${branch}`, branch);
+    sha = zipCommit(zipData);
+    if (!sha) throw e;
+  }
   if (installed?.commit === sha) return { updated: false, message: 'Already up to date.' };
   log(`Downloading ${repo}@${branch} (${sha.slice(0, 7)})…`);
-  const res = await fetch(`https://codeload.github.com/${repo}/zip/${sha}`, { headers: { 'user-agent': 'hailbrowser-launcher' }, signal: AbortSignal.timeout(120000) });
-  if (!res.ok) throw new Error(`Download failed (${res.status}).`);
+  zipData ??= await downloadZip(repo, sha, branch);
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hailbrowser-update-'));
   try {
     const zip = path.join(tmp, 'update.zip');
-    fs.writeFileSync(zip, Buffer.from(await res.arrayBuffer()));
+    fs.writeFileSync(zip, zipData);
     const out = path.join(tmp, 'x');
     fs.mkdirSync(out);
     extractZip(zip, out);

@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   CONFIG_NAME, DEFAULT_CONFIG, EXTENSION_ID, applyTree, findInstalledExtension, listFiles, listProfiles, loadConfig,
-  normalizeUrl, saveConfig, trustExtension, userDataDir, validateConfig, writeStamp,
+  normalizeUrl, saveConfig, trustExtension, userDataDir, validateConfig, writeStamp, zipCommit,
 } from '../launcher/lib.mjs';
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'hb-launcher-'));
@@ -138,4 +138,9 @@ test('the update stamp names the commit and the extension version', () => {
   assert.equal(disk.id, s.id);
   assert.equal(disk.version, '9.9.9');
   assert.equal(disk.commit, 'a'.repeat(40));
+});
+
+test('the commit is read from a GitHub zip comment', () => {
+  assert.equal(zipCommit(Buffer.concat([Buffer.from('PK...'), Buffer.from('e135dcbc9669d790a92c61e7e2aa0cdd947e8896')])), 'e135dcbc9669d790a92c61e7e2aa0cdd947e8896');
+  assert.equal(zipCommit(Buffer.from('PK no comment here, just the end of a central directory')), null);
 });
