@@ -1,7 +1,7 @@
 {
   "name": "hailbrowser",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source browser agent: Chrome side panel with your own models, an ultrafast decision mode, and an MCP bridge for Claude Code, OpenCode and other agents.",
   "license": "MIT",
   "type": "module",
@@ -14,7 +14,9 @@
     "check": "node scripts/check.mjs",
     "test": "npm run check && node --test \"tests/*.test.mjs\"",
     "mcp": "node mcp-server/src/index.js",
-    "setup": "node mcp-server/src/index.js setup"
+    "setup": "node mcp-server/src/index.js setup",
+    "start": "node launcher/hailbrowser.mjs",
+    "package": "node scripts/package.mjs"
   },
   "engines": {
     "node": ">=18"

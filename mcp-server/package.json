@@ -1,6 +1,6 @@
 {
   "name": "hailbrowser-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server that lets Claude Code, OpenCode, Cursor and other agents drive your real Chrome through the HailBrowser extension.",
   "license": "MIT",
   "type": "module",

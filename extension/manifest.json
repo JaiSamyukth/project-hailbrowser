@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "HailBrowser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source browser agent. Sidebar chat with your own models, an ultrafast decision mode, and an MCP bridge for Claude Code, OpenCode and more.",
   "minimum_chrome_version": "116",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzUcfMErfwhD/uJo+y1vOQEf55M8YsKpdWvzCK5unw5M7wUh1shFSq6kbMVapCXqcrPlM4/Y82uKg+3LXmWYdcXYM1mQVQRwEuSMeHpdcdve+DRNYoLw9gLkShXzijqCDGXpa9IVbnNw/l0FmGdldgdzV4fpp1e4qOLJqchKRfXou8L56YIPbC0EfLcErdhpKZTpHXuF85K0A9pnU6/n5+22600pCuNpJGRHxzv1YI/J8BxJspuIedsN/NWpW/b8hEdFe+Qv58rjQuxpCorLsUpUcsYOhmQKSDzXIjKkjnKD5yxApz/tbeeUH07raPa9mQxYTajyuc4Pnm3yKomcSOwIDAQAB",
   "permissions": ["debugger", "tabs", "scripting", "storage", "unlimitedStorage", "sidePanel", "alarms", "search", "tabGroups", "notifications", "favicon"],
   "host_permissions": ["<all_urls>"],
   "background": {

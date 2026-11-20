@@ -5,6 +5,7 @@ extension/                       Chrome MV3 extension (plain ES modules, no buil
   manifest.json
   src/background.js              service worker: runs, queue, schedules, saved state, side-panel ports, MCP calls
   src/store.js                   chrome.storage.local collections (an index + one key per item)
+  src/update.js                  reloads the extension when the launcher has updated the files on disk
   src/bridge.js                  WebSocket client to the local hub (auto-reconnect, keepalive)
   src/settings.js                providers, defaults, chrome.storage.local
   src/browser/cdp.js             chrome.debugger: trusted mouse/keyboard, focus emulation
@@ -23,6 +24,9 @@ extension/                       Chrome MV3 extension (plain ES modules, no buil
   src/agent/schedule.js          schedule times (once / daily / weekdays / interval), pure
   src/agent/chats.js             saved side-panel chats and transcript export
   sidepanel/                     chat, tasks, research, history, schedules and settings UI
+launcher/
+  hailbrowser.mjs                start script: menu, browser launch, first-run guide
+  lib.mjs                        settings file, browser/extension detection, self-update
 mcp-server/
   src/index.js                   MCP stdio server (`hailbrowser-mcp`)
   src/hub.js                     127.0.0.1 WebSocket hub: host/peer election, relaying

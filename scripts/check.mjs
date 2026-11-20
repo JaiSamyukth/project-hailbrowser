@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const roots = ['extension', 'mcp-server/src', 'scripts', 'tests'];
+const roots = ['extension', 'launcher', 'mcp-server/src', 'scripts', 'tests'];
 const files = [];
 const walk = (dir) => {
   for (const name of readdirSync(dir)) {
