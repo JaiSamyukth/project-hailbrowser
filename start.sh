@@ -21,7 +21,7 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 # Lets Node (22.21+) use HTTPS_PROXY when your network needs a proxy.
-NODE_USE_ENV_PROXY="${NODE_USE_ENV_PROXY:-1}"; export NODE_USE_ENV_PROXY
+if [ -n "${HTTPS_PROXY:-}${https_proxy:-}" ]; then NODE_USE_ENV_PROXY="${NODE_USE_ENV_PROXY:-1}"; export NODE_USE_ENV_PROXY; fi
 node launcher/hailbrowser.mjs "$@"
 status=$?
 # Keep a double-clicked window open so the messages can be read.

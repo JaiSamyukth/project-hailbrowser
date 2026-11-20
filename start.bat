@@ -13,6 +13,6 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-if not defined NODE_USE_ENV_PROXY set "NODE_USE_ENV_PROXY=1"
+if defined HTTPS_PROXY if not defined NODE_USE_ENV_PROXY set "NODE_USE_ENV_PROXY=1"
 rem Everything after node is on one line: cmd has already read it if an update replaces this file.
 node launcher\hailbrowser.mjs %* & if defined HAILBROWSER_NO_PAUSE (exit /b) else if errorlevel 1 (pause & exit /b 1) else (timeout /t 6 >nul 2>&1 & exit /b 0)
