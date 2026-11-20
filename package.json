@@ -12,7 +12,7 @@
     "sync-schemas": "node scripts/sync-schemas.mjs",
     "icons": "node scripts/make-icons.mjs",
     "check": "node scripts/check.mjs",
-    "test": "npm run check && node --test \"tests/*.test.mjs\"",
+    "test": "npm run check && node scripts/test.mjs",
     "mcp": "node mcp-server/src/index.js",
     "setup": "node mcp-server/src/index.js setup",
     "start": "node launcher/hailbrowser.mjs",
