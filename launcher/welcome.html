@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up HailBrowser</title>
+<style>
+  :root { --bg: #f7f6fb; --card: #fff; --ink: #1d1b26; --muted: #625e70; --accent: #6d4aff; --line: #e4e1ee; --code: #f0edfa; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #15131c; --card: #1f1c29; --ink: #ece9f5; --muted: #a39fb2; --accent: #9d85ff; --line: #332f40; --code: #2a2637; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 680px; margin: 48px auto; padding: 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  h1 { margin: 0 0 6px; font-size: 26px; }
+  p.lead { margin: 0 0 22px; color: var(--muted); }
+  ol { padding-left: 22px; margin: 0; }
+  li { margin: 0 0 16px; }
+  code, .path { font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code); border-radius: 6px; padding: 2px 6px; }
+  .path span { flex: 1; }
+  .path { display: flex; gap: 8px; align-items: center; padding: 8px 10px; margin-top: 8px; word-break: break-all; }
+  button { font: inherit; font-size: 14px; border: 1px solid var(--accent); color: var(--accent); background: none; border-radius: 8px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+  button:hover { background: var(--accent); color: #fff; }
+  .done { display: none; }
+  .installed .todo { display: none; }
+  .installed .done { display: block; }
+  .note { margin-top: 22px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="todo">
+      <h1>⚡ Add HailBrowser to your browser</h1>
+      <p class="lead">A one-time step. After this, the start script keeps it up to date by itself.</p>
+      <ol>
+        <li>Open a new tab and type this in the address bar, then press Enter (browsers do not let a page or script open it for you):
+          <div class="path"><span id="page">chrome://extensions</span><button data-copy="page" type="button">Copy</button></div>
+        </li>
+        <li>Turn on <b>Developer mode</b> in the top-right corner.</li>
+        <li>Click <b>Load unpacked</b> and choose this folder (it also opened in a file window):
+          <div class="path"><span id="path">the extension folder inside HailBrowser</span><button data-copy="path" type="button">Copy</button></div>
+        </li>
+        <li>Click the puzzle-piece icon in the toolbar and pin <b>HailBrowser</b>.</li>
+        <li>Click the HailBrowser icon (or press <b>Alt+H</b>) to open the side panel, then open <b>Settings</b> and add an API key for the model you want to use.</li>
+      </ol>
+      <p class="note">Keep the HailBrowser folder where it is: the browser loads the extension from it. If you move it, load it again from the new place.</p>
+    </div>
+    <div class="done">
+      <h1>⚡ HailBrowser is ready</h1>
+      <p class="lead">Click the HailBrowser icon in the toolbar or press <b>Alt+H</b> to open the side panel.</p>
+      <p>Run the start script whenever you want: it checks GitHub for updates, and the extension reloads itself into the new version when it is not busy.</p>
+    </div>
+  </div>
+</main>
+<script>
+  const params = new URLSearchParams(location.hash.slice(1));
+  for (const k of ['path', 'page']) if (params.get(k)) document.getElementById(k).textContent = params.get(k);
+  if (params.get('installed') === '1') document.body.classList.add('installed');
+  for (const b of document.querySelectorAll('button[data-copy]')) {
+    b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent); b.textContent = 'Copied'; } catch { b.textContent = 'Select and copy'; }
+    });
+  }
+</script>
+</body>
+</html>

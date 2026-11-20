@@ -74,13 +74,20 @@ Five decision backends:
 
 ### 1. The extension
 
+**Easiest: the zip.** Take `HailBrowser-<version>.zip` (built with `npm run package`), unpack it somewhere permanent, and run the start script: `start.bat` on Windows, `start.command` on macOS, `./start.sh` on Linux. You need [Node.js](https://nodejs.org) 18 or newer.
+
+The start script checks GitHub for updates, opens your browser with your start pages, and the first time walks you through adding the extension (**Developer mode** → **Load unpacked** → the `extension` folder). After that, updates install themselves and the extension reloads into them when it is idle. Settings (browser, profile, start pages, update branch) are in the menu and in `hailbrowser.config.json`; see [docs/launcher.md](docs/launcher.md).
+
+**From source:**
+
 ```bash
-git clone https://github.com/Shyamnath-Sankar/project-hailbrowser.git
-cd hailbrowser
+git clone https://github.com/JaiSamyukth/project-hailbrowser.git
+cd project-hailbrowser
 npm install
+./start.sh        # or start.bat; updates then use git
 ```
 
-Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the `extension/` folder. Click the toolbar icon (or press **Alt+H**) to open the side panel, then open **Settings** and add an API key.
+Or load it by hand: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the `extension/` folder. Click the toolbar icon (or press **Alt+H**) to open the side panel, then open **Settings** and add an API key.
 
 Works in Chrome, Edge, Brave and other Chromium browsers (116+).
 

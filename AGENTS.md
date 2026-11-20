@@ -8,3 +8,4 @@ Read README.md and docs/architecture.md first.
 - Keep API keys in chrome.storage.local; tests must not call paid APIs.
 - Checks: `npm test` (offline), `node scripts/e2e-browser.mjs` (real Chrome via puppeteer, fake model) and `node scripts/stress-browser.mjs` (long-horizon + chaos, ~2 min). For Fast-mode quality changes, run `node scripts/bench-fast.mjs` with a decision-model key in the environment (real calls, not part of `npm test`) and keep it at 26/26.
 - `chrome.scripting.executeScript` rejects `undefined` in `args`: always pass concrete values.
+- The launcher (`launcher/`, `start.bat`, `start.sh`) must stay dependency-free and work on Windows, macOS and Linux. Never change `key` in `extension/manifest.json`: it fixes the extension ID, and users' saved data hangs on it.

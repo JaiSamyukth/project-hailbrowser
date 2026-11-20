@@ -17,6 +17,7 @@ import { CHAT_HANDOFF_RULE, CHAT_MEMORY_RULE, CHAT_SCHEDULE_RULE, NORMAL_SYSTEM,
 import * as cdp from './browser/cdp.js';
 import * as page from './browser/page.js';
 import * as groups from './browser/groups.js';
+import { initUpdates, reloadIfUpdated } from './update.js';
 
 const ports = new Set();
 let bridgeConnected = false;
@@ -341,10 +342,22 @@ chrome.runtime.onStartup.addListener(applySettings);
 chrome.storage.onChanged.addListener((changes) => { if (changes.settings) applySettings(); });
 chrome.alarms.create('hail-keepalive', { periodInMinutes: 0.5 });
 chrome.alarms.onAlarm.addListener((a) => {
-  if (a.name === 'hail-keepalive') bridge.ensure();
+  if (a.name === 'hail-keepalive') { bridge.ensure(); checkForUpdate(); }
   else if (a.name.startsWith('sched:')) enqueue(a.name.slice(6));
 });
 applySettings();
+
+// ---------- updates ----------
+
+// The launcher updates the files on disk; reload into the new code once nothing is running and
+// no coding agent has made a call for a minute (so an agent's session is not cut off mid-task).
+const UPDATE_IDLE_MS = 60000;
+initUpdates().then((stamp) => {
+  if (stamp) notify('update:', 'HailBrowser updated', `Now running ${stamp.version ? `version ${stamp.version}` : 'the latest version'}${stamp.commit ? ` (${String(stamp.commit).slice(0, 7)})` : ''}.`);
+}).catch(() => {});
+function checkForUpdate() {
+  reloadIfUpdated(() => !run && Date.now() - lastAgentCall.at > UPDATE_IDLE_MS).catch(() => {});
+}
 
 // ---------- indicator ----------
 
