@@ -14,7 +14,7 @@ import path from 'node:path';
 import readline from 'node:readline/promises';
 import { pathToFileURL } from 'node:url';
 import {
-  CONFIG_NAME, EXTENSION_ID, ROOT, extensionsPage, findBrowser, findInstalledExtension, launchBrowser, listProfiles,
+  CONFIG_NAME, ROOT, extensionsPage, findBrowser, findInstalledExtension, launchBrowser, listProfiles,
   loadConfig, normalizeUrl, openWithSystem, readInstalled, saveConfig, trustExtension, update, userDataDir,
 } from './lib.mjs';
 
@@ -72,9 +72,9 @@ function profileDir(config) {
   return path.join(userDataDir(config), config.profile);
 }
 
-function welcomeUrl(installed) {
+function welcomeUrl(config, installed) {
   const url = pathToFileURL(path.join(ROOT, 'launcher', 'welcome.html'));
-  url.hash = new URLSearchParams({ path: EXT_DIR, installed: installed ? '1' : '0', id: EXTENSION_ID }).toString();
+  url.hash = new URLSearchParams({ path: EXT_DIR, installed: installed ? '1' : '0', page: extensionsPage(config) }).toString();
   return url.href;
 }
 
@@ -90,23 +90,23 @@ async function start(config) {
   const urls = [];
   if (!ext) {
     warn('HailBrowser is not added to this browser profile yet. Opening the setup guide.');
-    info(`1. Turn on ${bold('Developer mode')} (top right of the extensions page).`);
-    info(`2. Click ${bold('Load unpacked')} and pick this folder:`);
+    info(`1. Type ${bold(extensionsPage(config))} in the browser's address bar.`);
+    info(`2. Turn on ${bold('Developer mode')} (top right of that page).`);
+    info(`3. Click ${bold('Load unpacked')} and pick this folder:`);
     info(`   ${bold(EXT_DIR)}`);
-    info('3. Pin HailBrowser, then click its icon or press Alt+H to open the side panel.');
-    urls.push(welcomeUrl(false), extensionsPage(config));
+    info('4. Pin HailBrowser, then click its icon or press Alt+H to open the side panel.');
+    urls.push(welcomeUrl(config, false));
     openWithSystem(EXT_DIR);
   } else {
     if (!ext.enabled) {
-      warn(`HailBrowser is turned off in ${extensionsPage(config)}. Turn it back on there.`);
-      urls.push(extensionsPage(config));
+      warn(`HailBrowser is turned off. Type ${extensionsPage(config)} in the address bar and turn it back on.`);
     }
     if (trustExtension(ext.id)) ok('Coding agents will trust this copy of HailBrowser.');
     if (ext.path && path.resolve(ext.path) !== path.resolve(EXT_DIR)) {
       warn(`The browser loads HailBrowser from another folder: ${ext.path}`);
-      info('Updates here will not reach it. Remove it in the extensions page and load this folder instead:');
+      info(`Updates here will not reach it. Remove it at ${extensionsPage(config)} and load this folder instead:`);
       info(EXT_DIR);
-      urls.push(extensionsPage(config));
+      urls.push(welcomeUrl(config, false));
     }
   }
   urls.push(...config.startUrls.map(normalizeUrl).filter(Boolean));
@@ -199,9 +199,9 @@ function installGuide(config) {
   const browser = findBrowser(config);
   if (!browser) return warn(`Could not find ${config.browser}.`);
   const installed = !!findInstalledExtension(profileDir(config));
-  launchBrowser(browser, config, [welcomeUrl(installed), extensionsPage(config)]);
+  launchBrowser(browser, config, [welcomeUrl(config, installed)]);
   openWithSystem(EXT_DIR);
-  ok('Opened the setup guide and the extensions page. Load this folder with "Load unpacked":');
+  ok(`Opened the setup guide. At ${extensionsPage(config)}, load this folder with "Load unpacked":`);
   info(EXT_DIR);
 }
 

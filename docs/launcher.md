@@ -6,7 +6,7 @@ Each time you run it, it:
 
 1. **Checks GitHub for updates** and installs them (see below).
 2. **Shows a menu**: start, check for updates, settings, setup guide, coding-agent setup, health check. Press Enter to start.
-3. **Opens your browser** in the profile you chose with your start pages. The first time, it also opens a setup guide, the extensions page and the `extension` folder, so you can add HailBrowser with **Load unpacked**. Chrome does not let any script add an extension to your everyday profile, so this one step is by hand, once.
+3. **Opens your browser** in the profile you chose with your start pages. The first time, it also opens a setup guide and the `extension` folder, so you can add HailBrowser at `chrome://extensions` with **Load unpacked**. Chrome does not let any script add an extension to your everyday profile (or even open that page), so this one step is by hand, once.
 
 ## Options
 

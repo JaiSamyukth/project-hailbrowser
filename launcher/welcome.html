@@ -16,6 +16,7 @@
   ol { padding-left: 22px; margin: 0; }
   li { margin: 0 0 16px; }
   code, .path { font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code); border-radius: 6px; padding: 2px 6px; }
+  .path span { flex: 1; }
   .path { display: flex; gap: 8px; align-items: center; padding: 8px 10px; margin-top: 8px; word-break: break-all; }
   button { font: inherit; font-size: 14px; border: 1px solid var(--accent); color: var(--accent); background: none; border-radius: 8px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
   button:hover { background: var(--accent); color: #fff; }
@@ -32,10 +33,12 @@
       <h1>⚡ Add HailBrowser to your browser</h1>
       <p class="lead">A one-time step. After this, the start script keeps it up to date by itself.</p>
       <ol>
-        <li>Go to the <b>Extensions</b> tab that opened next to this one (or type <code>chrome://extensions</code> in the address bar).</li>
+        <li>Open a new tab and type this in the address bar, then press Enter (browsers do not let a page or script open it for you):
+          <div class="path"><span id="page">chrome://extensions</span><button data-copy="page" type="button">Copy</button></div>
+        </li>
         <li>Turn on <b>Developer mode</b> in the top-right corner.</li>
         <li>Click <b>Load unpacked</b> and choose this folder (it also opened in a file window):
-          <div class="path"><span id="path">the extension folder inside HailBrowser</span><button id="copy" type="button">Copy</button></div>
+          <div class="path"><span id="path">the extension folder inside HailBrowser</span><button data-copy="path" type="button">Copy</button></div>
         </li>
         <li>Click the puzzle-piece icon in the toolbar and pin <b>HailBrowser</b>.</li>
         <li>Click the HailBrowser icon (or press <b>Alt+H</b>) to open the side panel, then open <b>Settings</b> and add an API key for the model you want to use.</li>
@@ -51,11 +54,13 @@
 </main>
 <script>
   const params = new URLSearchParams(location.hash.slice(1));
-  if (params.get('path')) document.getElementById('path').textContent = params.get('path');
+  for (const k of ['path', 'page']) if (params.get(k)) document.getElementById(k).textContent = params.get(k);
   if (params.get('installed') === '1') document.body.classList.add('installed');
-  document.getElementById('copy').addEventListener('click', async (e) => {
-    try { await navigator.clipboard.writeText(document.getElementById('path').textContent); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Select and copy'; }
-  });
+  for (const b of document.querySelectorAll('button[data-copy]')) {
+    b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent); b.textContent = 'Copied'; } catch { b.textContent = 'Select and copy'; }
+    });
+  }
 </script>
 </body>
 </html>
